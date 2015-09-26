@@ -1,18 +1,9 @@
-0.0.1
-9/24/2015 - Initial first beta release
-
-0.0.2
-9/24/2015 - Refactored code
-
-0.0.4
-9/25/2015   Fixed several issues with playback
-            Added By Year
-            Added Descriptions in Movie Page
-            Added Color
-
-0.0.5
-9/25/2015   Added null check before adding a list item
-            Changed color of featured
+0.1.0
+9/26/2015
+            Quick bug / settings fix
+            Added new user settings to stop loading of
+                main page featured ratings and descriptions
+                quick page ratings and descriptions
 
 0.0.6
 9/26/2015   Added search
@@ -29,3 +20,27 @@
                 movie description
             Color, bold, italic config for
                 Drill Menus
+
+0.0.5
+9/25/2015   Added null check before adding a list item
+            Changed color of featured
+
+0.0.4
+9/25/2015   Fixed several issues with playback
+            Added By Year
+            Added Descriptions in Movie Page
+            Added Color
+
+0.0.2
+9/24/2015 - Refactored code
+
+0.0.1
+9/24/2015 - Initial first beta release
+
+
+
+
+
+
+
+
