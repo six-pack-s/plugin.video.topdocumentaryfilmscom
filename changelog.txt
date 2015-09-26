@@ -1,0 +1,28 @@
+0.0.1
+9/24/2015 - Initial first beta release
+
+0.0.4
+9/25/2015   Fixed several issues with playback
+            Added By Year
+            Added Descriptions in Movie Page
+            Added Color
+
+0.0.5
+9/25/2015   Added null check before adding a list item
+            Changed color of featured
+
+0.0.6
+9/26/2015   Added search
+            Added User Settings
+            Refactored Styling
+            Added featured listing rating / desc details
+            Added ability to turn off featured rating / desc for faster startup
+            Added user comments and reviews
+            Added configurable Movie Listing line
+                show or hide rating and or description
+            Color, bold, italic config for
+                movie name
+                movie rating
+                movie description
+            Color, bold, italic config for
+                Drill Menus

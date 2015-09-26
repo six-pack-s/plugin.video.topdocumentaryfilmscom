@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.topdocumentaryfilmscom" name="Top Documentary Films" version="0.0.6" provider-name="six_pack">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+	<import addon="plugin.video.youtube" version="3.0.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="addon.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">www.topdocumentaryfilms.com</summary>
+    <description lang="en">Watch documentaries from topdocumentaryfilms.com. All videos are publically available. Visit Kodi.tv forums for support</description>
+    <disclaimer lang="en">The author does not host or distribute any of the content displayed by this addon. The author does not have any affiliation with the content provider.</disclaimer>
+    <forum>http://forum.kodi.tv/showthread.php?tid=240005</forum>
+    <language>English</language>
+    <source></source>
+    <website></website>
+    <platform>all</platform>
+  </extension>
+</addon>

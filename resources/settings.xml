@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings>
+    <category label="30100">
+    <setting type="lsep" label="30110" />
+        <setting id="main_list_color" type="select" label="30111" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="White" />
+        <setting id="main_list_bold" type="bool" label="30112" default="true" />
+        <setting id="main_list_italic" type="bool" label="30113" default="false" />
+        <setting id="main_show_featured" type="bool" label="30114" default="true" />
+    <setting type="lsep" label="30150" />
+        <setting id="drill_list_color" type="select" label="30151" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="White" />
+        <setting id="drill_list_bold" type="bool" label="30152" default="true" />
+        <setting id="drill_list_italic" type="bool" label="30153" default="false" />
+    <setting type="lsep" label="30140" />
+        <setting id="pager_text" type="text" label="30141" default="  Next >>  " />
+        <setting id="pager_color" type="select" label="30142" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="Green" />
+        <setting id="pager_bold" type="bool" label="30143" default="false" />
+        <setting id="pager_italic" type="bool" label="30144" default="false" />
+    </category>
+    <category label="30119">
+    <setting type="lsep" label="30120" />
+        <setting id="movie_list_color" type="select" label="30121" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="White" />
+        <setting id="movie_list_bold" type="bool" label="30122" default="true" />
+        <setting id="movie_list_italic" type="bool" label="30123" default="false" />
+        <setting id="show_rating" type="bool" label="30124" default="true" />
+        <setting id="rating_list_color" type="select" label="30125" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="Gold" />
+        <setting id="rating_list_bold" type="bool" label="30126" default="false" />
+        <setting id="rating_list_italic" type="bool" label="30127" default="false" />
+        <setting id="show_description" type="bool" label="30128" default="true" />
+        <setting id="desc_list_color" type="select" label="30129" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="White" />
+        <setting id="desc_list_bold" type="bool" label="30130" default="false" />
+        <setting id="desc_list_italic" type="bool" label="30131" default="true" />
+    </category>
+</settings>
