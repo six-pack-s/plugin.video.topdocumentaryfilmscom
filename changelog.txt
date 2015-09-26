@@ -1,6 +1,9 @@
 0.0.1
 9/24/2015 - Initial first beta release
 
+0.0.2
+9/24/2015 - Refactored code
+
 0.0.4
 9/25/2015   Fixed several issues with playback
             Added By Year
