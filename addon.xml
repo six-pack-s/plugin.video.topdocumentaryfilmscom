@@ -2,6 +2,9 @@
 <addon id="plugin.video.topdocumentaryfilmscom" name="Top Documentary Films" version="0.0.6" provider-name="six_pack">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
+	<import addon="script.module.simplejson" version="3.3.0"/>
+	<import addon="script.module.urlresolver"  version="2.1.2"/>
+	<import addon="script.module.addon.common" />
 	<import addon="plugin.video.youtube" version="3.0.0"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="addon.py">
