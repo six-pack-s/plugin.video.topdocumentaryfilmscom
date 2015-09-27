@@ -10,7 +10,7 @@ setting = xbmcaddon.Addon().getSetting
 
 
 # styles menu item words
-def style(w, c, b, i, cp = 'false'):
+def style(w, c, b, i, cp='false'):
     retval = ''
     if len(w) < 1: return retval
     color = ''
@@ -25,6 +25,7 @@ def style(w, c, b, i, cp = 'false'):
     if b == 'true': retval = retval + '[/B]'
     if len(c) > 0: retval = retval + '[/COLOR]'
     return retval
+
 
 def setStyle(s):
     r = []
@@ -42,11 +43,12 @@ def setStyle(s):
         r.append('false')
     return r
 
+
 # Standard Movie Menu Item Look
 def buildMovieItem(name, rating, desc):
     mlc = setting('movie_list_color')
     sty = setStyle(setting('movie_list_color'))
-    retval = style(name, mlc, sty[0],sty[1],sty[2])
+    retval = style(name, mlc, sty[0], sty[1], sty[2])
     slc = setting('show_rating')
     if slc == 'true' and rating != 0: retval = retval + getStarRating(rating, 0)
     sdc = setting('show_description')
@@ -66,14 +68,15 @@ def getStarRating(star, full):
             star_rating = star_rating + " *"
             y = y + 1
     rating = str(int(x)) + " " + star_rating
-    return style('  -  ', rlc, sty[0], sty[1]) + style(rating, rlc, sty[0], sty[1]) + style('  -  ', rlc, sty[0], sty[1])
+    return style('  -  ', rlc, sty[0], sty[1]) + style(rating, rlc, sty[0], sty[1]) + style('  -  ', rlc, sty[0],
+                                                                                            sty[1])
 
 
 # builds movie description
 def getMovieDesc(desc):
     dlc = setting('desc_list_color')
-    sty= setStyle(setting('desc_list_style'))
-    return style(desc + "...", dlc, sty[0],sty[1],sty[2])
+    sty = setStyle(setting('desc_list_style'))
+    return style(desc + "...", dlc, sty[0], sty[1], sty[2])
 
 
 # builds the pager
@@ -197,7 +200,6 @@ def showText(heading, text):
             pass
 
 
-
 # Home - Add-on Start
 def TopLevelCategories():
     mlc = setting('main_list_color')
@@ -208,7 +210,8 @@ def TopLevelCategories():
     msf = setting('main_show_featured')
     sfd = setting('show_featured_dtl')
 
-    AddToMenu(style('Documentary Categories', mlc, mlb, mli, cap), 'url', 9, addon.getAddonInfo('icon'), '', '', movie_url)
+    AddToMenu(style('Documentary Categories', mlc, mlb, mli, cap), 'url', 9, addon.getAddonInfo('icon'), '', '',
+              movie_url)
     AddToMenu(style('Recently Added', mlc, mlb, mli, cap), 'url', 5, addon.getAddonInfo('icon'), '', '', movie_url)
     AddToMenu(style('Highest Rated', mlc, mlb, mli, cap), 'url', 8, addon.getAddonInfo('icon'), '', '', movie_url)
     AddToMenu(style('Most Shared', mlc, mlb, mli, cap), 'url', 7, addon.getAddonInfo('icon'), '', '', movie_url)
@@ -217,14 +220,8 @@ def TopLevelCategories():
     AddToMenu(style('Search', mlc, mlb, mli, cap), 'url', 12, addon.getAddonInfo('icon'), '', '', movie_url)
 
     if msf == 'true':
-        AddToMenu(style('  ---        ', 'green', 0, 0) +
-                  style('---        ', 'red', 0, 0) +
-                  style('---        ', 'yellow', 0, 0) +
-                  style('         FEATURED         ', 'red', 1, 0) +
-                  style('        ---', 'yellow', 0, 0) +
-                  style('        ---', 'red', 0, 0) +
-                  style('        ---  ', 'green', 0, 0),
-                  'url', 0, addon.getAddonInfo('icon'), '', '', movie_url)
+        AddToMenu(style('                                                  F  E  A  T  U  R  E  D', 'red', 1, 0, 1),
+            'url', 0, addon.getAddonInfo('icon'), '', '', 'url')
 
         html = OpenURL('http://topdocumentaryfilms.com/')
         main = re.compile('<main role="main" class="grid-2-3">(.+?)</main>', re.DOTALL).findall(
@@ -235,7 +232,12 @@ def TopLevelCategories():
             for modules in gallery:
                 url = ''
                 name = ''
-                gall = re.compile('\n\n(.+?)\n', re.DOTALL).findall(modules.replace('amp;', ''))
+                gall = re.compile('\n\n(.+?).\n\n', re.DOTALL).findall(modules.replace('amp;', ''))
+                try:
+                    gall.append(re.compile('>.\n(.+?).\n<', re.DOTALL).findall(modules.replace('amp;', ''))[0])
+                except:
+                    pass
+
                 for module in gall:
                     try:
                         img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/" + \
@@ -246,6 +248,7 @@ def TopLevelCategories():
                         info = re.compile(
                             '<a href="http://topdocumentaryfilms.com/(.+?)/" title="(.+?)">', re.DOTALL).findall(
                             module.replace('amp;', ''))
+                        print info
                     except:
                         pass
 
@@ -268,6 +271,7 @@ def TopLevelCategories():
                 m.replace('amp;', ''))
 
             for article in articles:
+                print article
                 try:
                     img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/" + \
                           re.compile('http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(
@@ -278,20 +282,22 @@ def TopLevelCategories():
                 except:
                     pass
 
-                for u, n in info:
-                    url = u
-                    name = sanitize(n)
+                if article.find('docu-text') < 0:
+                    for u, n in info:
+                        print n
+                        url = u
+                        name = sanitize(n)
 
-                    if len(url) > 0 and len(name) > 0:
-                        if sfd == 'true':
-                            page_data = getDetails(url, 0)
-                        try:
-                            AddToMenu(buildMovieItem(name, page_data[0], sanitize(page_data[1])), url
-                                      , 2, img, '', '', movie_url)
-                        except:
-                            AddToMenu(buildMovieItem(name, 0, ''), url, 2, img, '', '', movie_url)
-                    else:
-                        pass
+                        if len(url) > 0 and len(name) > 0:
+                            if sfd == 'true':
+                                page_data = getDetails(url, 0)
+                            try:
+                                AddToMenu(buildMovieItem(name, page_data[0], sanitize(page_data[1])), url
+                                          , 2, img, '', '', movie_url)
+                            except:
+                                AddToMenu(buildMovieItem(name, 0, ''), url, 2, img, '', '', movie_url)
+                        else:
+                            pass
 
 
 # By Year menu click
@@ -314,7 +320,8 @@ def ListCategories():
         if len(url) > 50:
             url = "911"
             name = "911"
-        AddToMenu(style(sanitize(name), dlc, sty[0], sty[1], sty[2]), url, 1, addon.getAddonInfo('icon'), '', '', movie_url)
+        AddToMenu(style(sanitize(name), dlc, sty[0], sty[1], sty[2]), url, 1, addon.getAddonInfo('icon'), '', '',
+                  movie_url)
 
 
 # Movie Listing right before play
@@ -389,13 +396,7 @@ def AddVideoEntry(video, name):
     AddToMenu(style('Comments & User Reviews', 'white', 0, 0), ex.replace(' ', '-').replace('[B]', ''), 13, iconimage,
               '', '', video)
 
-    AddToMenu(style('  ---        ', 'green', 0, 0) +
-              style('---        ', 'red', 0, 0) +
-              style('---        ', 'yellow', 0, 0) +
-              style('         MOVIE SUMMARY         ', 'red', 1, 0) +
-              style('        ---', 'yellow', 0, 0) +
-              style('        ---', 'red', 0, 0) +
-              style('        ---  ', 'green', 0, 0),
+    AddToMenu('                                                  ' + style('M O V I E   S U M M A R Y', 'red', 1, 0, 1),
               url, 3, addon.getAddonInfo('icon'), '', '', video)
 
     sentence = ''
@@ -412,30 +413,32 @@ def buildListPage(html):
     img = addon.getAddonInfo('icon')
     articles = re.compile('<article class="module">(.+?)</article>', re.DOTALL).findall(html.replace('amp;', ''))
     for article in articles:
+        print article
         name = ''
         url = ''
         imgs = re.compile('<img width="95" height="125" src="(.+?)"', re.DOTALL).findall(article.replace('amp;', ''))
         for i in imgs:
             img = i
-        descs = re.compile('<p>(.+?)</p>', re.DOTALL).findall(article.replace('amp;', ''))
-        for d in descs:
-            desc = d
-        names = re.compile(
-            '<div><a title="(.+?)" href="http://topdocumentaryfilms.com/.+?/">Watch now &rarr;</a></div>',
-            re.DOTALL).findall(article.replace('amp;', ''))
-        for n in names:
-            name = sanitize(n)
+        desc = sanitize(re.compile('<p>(.+?)</p>', re.DOTALL).findall(article.replace('amp;', ''))[0])
+        if article.find('Watch now') > 0:
+            names = re.compile(
+                '<a title="(.+?)" href="http://topdocumentaryfilms.com/.+?/">Watch now &rarr;</a>',
+                re.DOTALL).findall(article.replace('amp;', ''))
+            if len(names) > 0:
+                for n in names:
+                    print n
+                    name = sanitize(n)
 
-        urls = re.compile('<div><a title=".+?" href="http://topdocumentaryfilms.com/(.+?)/">Watch now &rarr;</a></div>',
-                          re.DOTALL).findall(article.replace('amp;', ''))
-        for u in urls:
-            url = u
+            urls = re.compile(
+                '<div><a title=".+?" href="http://topdocumentaryfilms.com/(.+?)/">Watch now &rarr;</a></div>',
+                re.DOTALL).findall(article.replace('amp;', ''))
+            for u in urls:
+                url = u
+            rating = re.compile('<span class="archive_rating"><span class="star_color">.+?</span>(.+?)</span>',
+                                re.DOTALL).findall(article.replace("amp;", ''))[0]
 
-        rating = re.compile('<span class="archive_rating"><span class="star_color">.+?</span>(.+?)</span>',
-                            re.DOTALL).findall(article.replace("amp;", ''))[0]
-
-        if len(url) > 0 and len(name) > 0:
-            AddToMenu(buildMovieItem(name, rating, desc), url, 2, img, desc, '', movie_url)
+            if len(url) > 0 and len(name) > 0:
+                AddToMenu(buildMovieItem(name, rating, desc), url, 2, img, desc, '', movie_url)
 
     page = re.compile('<div class="pagination module">(.+?)</div>',
                       re.DOTALL).findall(html.replace('amp;', ''))
