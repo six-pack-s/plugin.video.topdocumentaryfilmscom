@@ -1,39 +1,34 @@
 <strings>
-  <string id="30100">Appearance</string>
-  <string id="30110">Main Categories</string>
+  <string id="30100">Main Menu</string>
+  <string id="30110">Top Categories</string>
   <string id="30111">Color</string>
-  <string id="30112">Bold</string>
-  <string id="30113">Italic</string>
+  <string id="30118">Main List Styling</string>
   <string id="30114">Show Featured</string>
-  <string id="30115">Featured Detail</string>
-  <string id="30116">Show Quick Detail</string>
+  <string id="30115">Show Featured Movie Details on Start (could be slowing start)</string>
+  <string id="30116">Show Quick Screen Movie Details (could slow open of movie listing)</string>
+
 
   <string id="30119">Movie Line</string>
-  <string id="30120">Movie</string>
-  <string id="30121">Color</string>
-  <string id="30122">Bold</string>
-  <string id="30123">Italic</string>
-  <string id="30124">Rating</string>
-  <string id="30125">Color</string>
-  <string id="30126">Bold</string>
-  <string id="30127">Italic</string>
-  <string id="30128">Description</string>
-  <string id="30129">Color</string>
-  <string id="30130">Bold</string>
-  <string id="30131">Italic</string>
+  <string id="30120">Movie - Rating - Description Visibility and Styling Properties</string>
+  <string id="30121">Movie Title Color</string>
+  <string id="30122">Movie Title Style</string>
 
+  <string id="30124">Show Rating</string>
+  <string id="30125">Rating Color</string>
+  <string id="30126">Movie Rating Style</string>
 
-  <string id="30140">Pager</string>
+  <string id="30128">Show Description</string>
+  <string id="30129">Description Color</string>
+  <string id="30130">Movie Description Style</string>
+
+  <string id="30149">List Menus</string>
+  <string id="30150">Lists</string>
+  <string id="30151">Color</string>
+  <string id="30152">Drill List Styling</string>
+
+  <string id="30140">List Paging</string>
   <string id="30141">Name</string>
   <string id="30142">Color</string>
-  <string id="30143">Bold</string>
-  <string id="30144">Italic</string>
+  <string id="30143">Pager Styling</string>
 
-  <string id="30150">Drill List</string>
-  <string id="30151">Color</string>
-  <string id="30152">Bold</string>
-  <string id="30153">Italic</string>
-
-  <string id="30120">Documentary List Name</string>
-  <string id="30130">Listing Drill Menus</string>
 </strings>

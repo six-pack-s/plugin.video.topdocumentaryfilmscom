@@ -1,35 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <settings>
-    <category label="30100">
+    <category label="30100"> <!-- Main Menu -->
     <setting type="lsep" label="30110" />
         <setting id="main_list_color" type="select" label="30111" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="White" />
-        <setting id="main_list_bold" type="bool" label="30112" default="true" />
-        <setting id="main_list_italic" type="bool" label="30113" default="false" />
+        <setting id="main_list_style" type="enum" label="30118" values="-| Bold | Italic | Capitalize | Bold + Italic | Bold + Capitalize | Italic + Capitalize | Bold + Italic + Capitalize" default="-" />
         <setting id="main_show_featured" type="bool" label="30114" default="true" />
         <setting id="show_featured_dtl" type="bool" label="30115" default="false" />
         <setting id="show_quick_dtl" type="bool" label="30116" default="false" />
+    </category>
+    <category label="30149"> <!-- List Menus -->
     <setting type="lsep" label="30150" />
         <setting id="drill_list_color" type="select" label="30151" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="White" />
-        <setting id="drill_list_bold" type="bool" label="30152" default="true" />
-        <setting id="drill_list_italic" type="bool" label="30153" default="false" />
+        <setting id="drill_list_style" type="enum" label="30152" values="-| Bold | Italic | Capitalize | Bold + Italic | Bold + Capitalize | Italic + Capitalize | Bold + Italic + Capitalize" default="-" />
     <setting type="lsep" label="30140" />
         <setting id="pager_text" type="text" label="30141" default="  Next >>  " />
         <setting id="pager_color" type="select" label="30142" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="Green" />
-        <setting id="pager_bold" type="bool" label="30143" default="false" />
-        <setting id="pager_italic" type="bool" label="30144" default="false" />
+        <setting id="pager_style" type="enum" label="30143" values="-| Bold | Italic | Capitalize | Bold + Italic | Bold + Capitalize | Italic + Capitalize | Bold + Italic + Capitalize" default="-" />
     </category>
-    <category label="30119">
+    <category label="30119"> <!-- Movie Line -->
     <setting type="lsep" label="30120" />
         <setting id="movie_list_color" type="select" label="30121" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="White" />
-        <setting id="movie_list_bold" type="bool" label="30122" default="true" />
-        <setting id="movie_list_italic" type="bool" label="30123" default="false" />
+        <setting id="movie_list_style" type="enum" label="30122" values="-| Bold | Italic | Capitalize | Bold + Italic | Bold + Capitalize | Italic + Capitalize | Bold + Italic + Capitalize" default="-" />
         <setting id="show_rating" type="bool" label="30124" default="true" />
         <setting id="rating_list_color" type="select" label="30125" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="Gold" />
-        <setting id="rating_list_bold" type="bool" label="30126" default="false" />
-        <setting id="rating_list_italic" type="bool" label="30127" default="false" />
+        <setting id="rating_list_style" type="enum" label="30126" values="-| Bold | Italic | Capitalize | Bold + Italic | Bold + Capitalize | Italic + Capitalize | Bold + Italic + Capitalize" default="-" />
         <setting id="show_description" type="bool" label="30128" default="true" />
         <setting id="desc_list_color" type="select" label="30129" values="White|Green|Red|Purple|Gold|Pink|Orange|Blue" default="White" />
-        <setting id="desc_list_bold" type="bool" label="30130" default="false" />
-        <setting id="desc_list_italic" type="bool" label="30131" default="true" />
+        <setting id="desc_list_style" type="enum" label="30130" values="-| Bold | Italic | Capitalize | Bold + Italic | Bold + Capitalize | Italic + Capitalize | Bold + Italic + Capitalize" default="-" />
     </category>
 </settings>
