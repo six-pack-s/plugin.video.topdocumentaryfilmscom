@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 0.1.1
 9/27/2015
             Fixed long descriptions
@@ -5,6 +6,8 @@
             Refactored add on settings
             Added Version splash screen
 
+=======
+>>>>>>> 4775f0693cec24c564768a282510999470be6982
 0.1.0
 9/26/2015
             Quick bug / settings fix

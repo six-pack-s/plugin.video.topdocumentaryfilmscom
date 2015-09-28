@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<<<<<<< HEAD
 <addon id="plugin.video.topdocumentaryfilmscom" name="Top Documentary Films" version="0.1.1" provider-name="six_pack">
+=======
+<addon id="plugin.video.topdocumentaryfilmscom" name="Top Documentary Films" version="0.1.0" provider-name="six_pack">
+>>>>>>> 4775f0693cec24c564768a282510999470be6982
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
 	<import addon="script.module.urlresolver"  version="2.1.2"/>
