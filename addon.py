@@ -1,4 +1,4 @@
-import urllib, urllib2, sys, re, urlparse, re, xbmcplugin, xbmcgui, xbmcaddon, datetime, os, math
+import urllib, urllib2, sys, re, urlparse, xbmcplugin, xbmcgui, xbmcaddon, datetime, os, math
 
 base_url = sys.argv[0]
 addon_handle = int(sys.argv[1])
@@ -10,91 +10,103 @@ setting = xbmcaddon.Addon().getSetting
 
 
 # styles menu item words
-def style(w, c, b, i):
+def style(w, c, b, i, cp='false'):
     retval = ''
+    if len(w) < 1: return retval
     color = ''
     bold = ''
     italic = ''
-    if i == 'true':
-        i = 1
-    else:
-        i = 0
-    if b == 'true':
-        b = 1
-    else:
-        b = 0
-    if len(w) < 1: return retval
+    if cp == 'true': w = w.upper()
     if len(c) > 0: color = '[COLOR ' + c.lower() + ']'
-    if b > 0: bold = '[B]'
-    if i > 0: italic = '[I]'
+    if b == 'true': bold = '[B]'
+    if i == 'true': italic = '[I]'
     retval = color + bold + italic + w
-    if i > 0: retval = retval + '[/I]'
-    if b > 0: retval = retval + '[/B]'
+    if i == 'true': retval = retval + '[/I]'
+    if b == 'true': retval = retval + '[/B]'
     if len(c) > 0: retval = retval + '[/COLOR]'
     return retval
+
+# interprets user settings for bld, itl, cap
+def setStyle(s):
+    r = []
+    if s == '1' or s == '4' or s == '5' or s == '7':
+        r.append('true')
+    else:
+        r.append('false')
+    if s == '2' or s == '4' or s == '6' or s == '7':
+        r.append('true')
+    else:
+        r.append('false')
+    if s == '3' or s == '5' or s == '6' or s == '7':
+        r.append('true')
+    else:
+        r.append('false')
+    return r
 
 
 # Standard Movie Menu Item Look
 def buildMovieItem(name, rating, desc):
-    retval = ''
     mlc = setting('movie_list_color')
-    mlb = setting('movie_list_bold')
-    mli = setting('movie_list_italic')
-    retval = style(name, mlc, mlb, mli)
-
+    sty = setStyle(setting('movie_list_style'))
+    retval = style(name, mlc, sty[0], sty[1], sty[2])
     slc = setting('show_rating')
     if slc == 'true' and rating != 0: retval = retval + getStarRating(rating, 0)
-
     sdc = setting('show_description')
     if sdc == 'true': retval = retval + getMovieDesc(desc[0:100])
-
     return retval
 
 
 # returns formatted star rating
 def getStarRating(star, full):
     rlc = setting('rating_list_color')
-    rlb = setting('rating_list_bold')
-    rli = setting('rating_list_italic')
-    x = math.ceil(float(star))
-    y = 0
-    star_rating = ""
-    if full == 1:
-        while y < x:
-            star_rating = star_rating + " *"
-            y = y + 1
-    rating = str(int(x)) + " " + star_rating
-    return style('  -  ', rlc, rlb, rli) + style(rating, rlc, rlb, rli) + style('  -  ', rlc, rlb, rli)
+    sty = setStyle('rating_list_style')
+
+    if full == 0:
+        return style('  -  ', rlc, sty[0], sty[1]) + style(star[0:4], rlc, sty[0], sty[1]) + \
+                        style('  -  ', rlc, sty[0], sty[1])
+    else:
+        x = math.ceil(float(star))
+        y = 0
+        star_rating = ""
+        if full == 1:
+            while y < x:
+                star_rating = star_rating + " *"
+                y = y + 1
+        rating = star[0:4] + " " + star_rating
+        return style('  -    ', rlc, sty[0], sty[1]) + style(rating, rlc, sty[0], sty[1])
 
 
+# builds movie description
 def getMovieDesc(desc):
+    if len(desc) < 5: return ""
     dlc = setting('desc_list_color')
-    dlb = setting('desc_list_bold')
-    dli = setting('desc_list_italic')
-    return style(desc + "...", dlc, dlb, dli)
+    sty = setStyle(setting('desc_list_style'))
+    return style(desc + "...", dlc, sty[0], sty[1], sty[2])
 
 
+# builds the pager
 def getPager():
     pt = setting('pager_text')
     pc = setting('pager_color')
-    pb = setting('pager_bold')
-    pi = setting('pager_italic')
-    return style(pt, pc, pb, pi)
+    sty = setStyle(setting('pager_style'))
+    return style(pt, pc, sty[0], sty[1], sty[2])
 
 
+# cleans strings for presentation
 def sanitize(str):
-    str.replace('&#039;', '')
     str = re.sub('<[^>]*>', '', str)
+    str = re.sub('[[>]*..]', '', str)
+    str = re.sub('&....;', '', str)
     return str
+
+
 
 
 # returns star and description for movie
 def getDetails(url, full):
     retval = []
-    # try:
-    html = OpenURL('http://topdocumentaryfilms.com/' + url)
+    html = OpenURL('http://topdocumentaryfilms.com/%s' % url)
     rating = re.compile('<div class="star">(.+?)</div>', re.DOTALL).findall(html.replace("amp;", ''))[0]
-
     if len(rating) < 1:
         retval.append(" ")
     else:
@@ -102,14 +114,7 @@ def getDetails(url, full):
 
     contents = re.compile('<div class=".+?contentpic">(.+?)</div>', re.DOTALL).findall(html.replace('amp;', ''))
     for content in contents:
-
-        imgs = re.compile('http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(
-            content.replace('amp;', ''))
-        for i in imgs:
-            img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/" + i
-
-        desc = re.compile('<p>(.+?)</p>', re.DOTALL).findall(content.replace('amp;', ''))[0]
-        desc = re.sub('<[^>]*>', '', desc)
+        desc = sanitize(re.compile('<p>(.+?)</p>', re.DOTALL).findall(content.replace('amp;', ''))[0])
         words = desc.split()
         sentence = ''
         for word in words:
@@ -121,24 +126,24 @@ def getDetails(url, full):
             retval.append(" ")
         else:
             retval.append(sentence)
+
+        img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/%s" % \
+              re.compile('http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(
+                  content.replace('amp;', ''))[0]
+        retval.append(img)
+
     return retval
-    # except:
-    #   print "Unexpected error:", sys.exc_info()[0]
-    #   return " "
 
 
-# Addds Menu Item to the List
+# Adds Menu Item to the List
 def AddToMenu(name, url, mode, iconimage, description, subtitles_url, movie_url):
     u = sys.argv[0] + "?url=" + urllib.quote_plus(url) + "&mode=" + str(mode) + "&name=" + urllib.quote_plus(
         name) + "&iconimage=" + urllib.quote_plus(iconimage) + "&description=" + urllib.quote_plus(
         description) + "&subtitles_url=" + urllib.quote_plus(subtitles_url) + "&movie_url=" + urllib.quote_plus(
         movie_url)
-
     liz = xbmcgui.ListItem(label=name, label2=description, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-
-    date_string = "09.22.2015"
     liz.setInfo("video",
-                infoLabels={"title": name, "plot": description, "plotoutline": description, "date": date_string})
+                infoLabels={"title": name, "plot": description, "plotoutline": description, "date": "9/11/2015"})
     if mode == 3:
         liz.setProperty("IsPlayable", "true")
         liz.setProperty("IsFolder", "false")
@@ -173,7 +178,6 @@ def PlayVideo(name, url, iconimage, description, subtitles_url):
         subtitles_file = download_subtitles(subtitles_url)
     xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, liz)
     if subtitles_url and ADDON.getSetting('subtitles') == 'true':
-        # Successfully started playing something?
         while 1:
             if xbmc.Player().isPlaying():
                 break;
@@ -182,6 +186,7 @@ def PlayVideo(name, url, iconimage, description, subtitles_url):
         xbmc.Player().setSubtitles(subtitles_file)
 
 
+# opens user ratings & comments
 def showText(heading, text):
     id = 10147
     xbmc.executebuiltin('ActivateWindow(%d)' % id)
@@ -202,27 +207,31 @@ def showText(heading, text):
 # Home - Add-on Start
 def TopLevelCategories():
     mlc = setting('main_list_color')
-    mlb = setting('main_list_bold')
-    mli = setting('main_list_italic')
+    sty = setStyle(setting('main_list_style'))
+    mlb = sty[0]
+    mli = sty[1]
+    cap = sty[2]
     msf = setting('main_show_featured')
     sfd = setting('show_featured_dtl')
-    AddToMenu(style('Documentary Categories', mlc, mlb, mli), 'url', 9, addon.getAddonInfo('icon'), '', '', movie_url)
-    AddToMenu(style('Recently Added', mlc, mlb, mli), 'url', 5, addon.getAddonInfo('icon'), '', '', movie_url)
-    AddToMenu(style('Highest Rated', mlc, mlb, mli), 'url', 8, addon.getAddonInfo('icon'), '', '', movie_url)
-    AddToMenu(style('Most Shared', mlc, mlb, mli), 'url', 7, addon.getAddonInfo('icon'), '', '', movie_url)
-    AddToMenu(style('Most Voted', mlc, mlb, mli), 'url', 6, addon.getAddonInfo('icon'), '', '', movie_url)
-    AddToMenu(style('By Year', mlc, mlb, mli), 'url', 10, addon.getAddonInfo('icon'), '', '', movie_url)
-    AddToMenu(style('Search', mlc, mlb, mli), 'url', 12, addon.getAddonInfo('icon'), '', '', movie_url)
+
+
+    splash = setting("splash_start")
+    if splash == 'true':
+        showSplash()
+        xbmcaddon.Addon().setSetting("splash_start", "false")
+
+    AddToMenu(style('Documentary Categories', mlc, mlb, mli, cap), 'url', 9, addon.getAddonInfo('icon'), '', '',
+              movie_url)
+    AddToMenu(style('Recently Added', mlc, mlb, mli, cap), 'url', 5, addon.getAddonInfo('icon'), '', '', movie_url)
+    AddToMenu(style('Highest Rated', mlc, mlb, mli, cap), 'url', 8, addon.getAddonInfo('icon'), '', '', movie_url)
+    AddToMenu(style('Most Shared', mlc, mlb, mli, cap), 'url', 7, addon.getAddonInfo('icon'), '', '', movie_url)
+    AddToMenu(style('Most Voted', mlc, mlb, mli, cap), 'url', 6, addon.getAddonInfo('icon'), '', '', movie_url)
+    AddToMenu(style('By Year', mlc, mlb, mli, cap), 'url', 10, addon.getAddonInfo('icon'), '', '', movie_url)
+    AddToMenu(style('Search', mlc, mlb, mli, cap), 'url', 12, addon.getAddonInfo('icon'), '', '', movie_url)
 
     if msf == 'true':
-        AddToMenu(style('  ---        ', 'green', 0, 0) +
-                  style('---        ', 'red', 0, 0) +
-                  style('---        ', 'yellow', 0, 0) +
-                  style('         FEATURED         ', 'red', 1, 0) +
-                  style('        ---', 'yellow', 0, 0) +
-                  style('        ---', 'red', 0, 0) +
-                  style('        ---  ', 'green', 0, 0),
-                  'url', 0, addon.getAddonInfo('icon'), '', '', movie_url)
+        AddToMenu(style('                                                  F  E  A  T  U  R  E  D', 'red', 1, 0, 1),
+                  'url', 0, addon.getAddonInfo('icon'), '', '', 'url')
 
         html = OpenURL('http://topdocumentaryfilms.com/')
         main = re.compile('<main role="main" class="grid-2-3">(.+?)</main>', re.DOTALL).findall(
@@ -233,11 +242,17 @@ def TopLevelCategories():
             for modules in gallery:
                 url = ''
                 name = ''
-                gall = re.compile('\n\n(.+?)\n', re.DOTALL).findall(modules.replace('amp;', ''))
+                gall = re.compile('\n\n(.+?).\n\n', re.DOTALL).findall(modules.replace('amp;', ''))
+                try:
+                    gall.append(re.compile('>.\n(.+?).\n<', re.DOTALL).findall(modules.replace('amp;', ''))[0])
+                except:
+                    pass
+
                 for module in gall:
                     try:
                         img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/" + \
-                              re.compile('http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(
+                              re.compile('http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"',
+                                         re.DOTALL).findall(
                                   module.replace('amp;', ''))[0]
 
                         info = re.compile(
@@ -248,13 +263,13 @@ def TopLevelCategories():
 
                     for u, n in info:
                         url = u
-                        name = n.replace('&#039;', '')
+                        name = sanitize(n)
 
                     if len(url) > 0 and len(name) > 0:
                         if sfd == 'true':
                             page_data = getDetails(url, 0)
                         try:
-                            AddToMenu(buildMovieItem(name, page_data[0], page_data[1].replace('&#039;', '')), url
+                            AddToMenu(buildMovieItem(name, page_data[0], sanitize(page_data[1])), url
                                       , 2, img, '', '', movie_url)
                         except:
                             AddToMenu(buildMovieItem(name, 0, ''), url, 2, img, '', '', movie_url)
@@ -265,8 +280,6 @@ def TopLevelCategories():
                 m.replace('amp;', ''))
 
             for article in articles:
-                url = ''
-                name = ''
                 try:
                     img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/" + \
                           re.compile('http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(
@@ -277,59 +290,57 @@ def TopLevelCategories():
                 except:
                     pass
 
-                for u, n in info:
-                    url = u
-                    name = n.replace('&#039;', '')
+                if article.find('docu-text') < 0:
+                    for u, n in info:
+                        url = u
+                        name = sanitize(n)
 
-                    if len(url) > 0 and len(name) > 0:
-                        if sfd == 'true':
-                            page_data = getDetails(url, 0)
-                        try:
-                            AddToMenu(buildMovieItem(name, page_data[0], page_data[1].replace('&#039;', '')), url
-                                      , 2, img, '', '', movie_url)
-                        except:
-                            AddToMenu(buildMovieItem(name, 0, ''), url, 2, img, '', '', movie_url)
-                    else:
-                        pass
+                        if len(url) > 0 and len(name) > 0:
+                            if sfd == 'true':
+                                page_data = getDetails(url, 0)
+                            try:
+                                AddToMenu(buildMovieItem(name, page_data[0], sanitize(page_data[1])), url
+                                          , 2, img, '', '', movie_url)
+                            except:
+                                AddToMenu(buildMovieItem(name, 0, ''), url, 2, img, '', '', movie_url)
+                        else:
+                            pass
 
 
 # By Year menu click
 def TopLevelYears():
     dlc = setting('drill_list_color')
-    dlb = setting('drill_list_bold')
-    dli = setting('drill_list_italic')
+    sty = setStyle(setting('drill_list_style'))
     x = datetime.datetime.now().year
     while x > 1993:
-        AddToMenu(style(str(x), dlc, dlb, dli), str(x), 11, addon.getAddonInfo('icon'), '', '', movie_url)
+        AddToMenu(style(str(x), dlc, sty[0], sty[1], sty[2]), str(x), 11, addon.getAddonInfo('icon'), '', '', movie_url)
         x = x - 1
 
 
 # Documentary Categories home menu item click
 def ListCategories():
     dlc = setting('drill_list_color')
-    dlb = setting('drill_list_bold')
-    dli = setting('drill_list_italic')
+    sty = setStyle(setting('drill_list_style'))
     html = OpenURL('http://topdocumentaryfilms.com/')
     match = re.compile('/category/(.+?)/" >(.+?)</a>', re.DOTALL).findall(html.replace('amp;', ''))
     for url, name in match:
         if len(url) > 50:
             url = "911"
             name = "911"
-        AddToMenu(style(sanitize(name), dlc, dlb, dli), url, 1, addon.getAddonInfo('icon'), '', '', movie_url)
+        AddToMenu(style(sanitize(name), dlc, sty[0], sty[1], sty[2]), url, 1, addon.getAddonInfo('icon'), '', '',
+                  movie_url)
 
 
 # Movie Listing right before play
 def AddVideoEntry(video, name):
     mlc = setting('movie_list_color')
-    mlb = setting('movie_list_bold')
-    mli = setting('movie_list_italic')
+    sty = setStyle(setting('movie_list_style'))
     dlc = setting('desc_list_color')
-    dlb = setting('desc_list_bold')
-    dli = setting('desc_list_italic')
+    stx = setStyle(setting('desc_list_style'))
     url = ''
     img = ''
     desc = ''
-    html = OpenURL('http://topdocumentaryfilms.com/' + video)
+    html = OpenURL('http://topdocumentaryfilms.com/%s' % video)
 
     contents = re.compile('<div class=".+?contentpic">(.+?)</div>', re.DOTALL).findall(html.replace('amp;', ''))
     for content in contents:
@@ -337,114 +348,108 @@ def AddVideoEntry(video, name):
         imgs = re.compile('http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(
             content.replace('amp;', ''))
         for i in imgs:
-            img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/" + i
-        desc = re.compile('<p>(.+?)</p>', re.DOTALL).findall(content.replace('amp;', ''))[0]
-        desc = re.sub('<[^>]*>', '', desc)
-        words = desc.split()
+            img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/%s" % i
+
+        descs = re.compile('<p>(.+?)</p>', re.DOTALL).findall(content.replace('amp;', ''))
+        words = []
+        for desc in descs:
+            desc = re.sub('<[^>]*>', '', desc)
+            words.append(desc.split())
+
     rating = re.compile('<div class="star">(.+?)</div>', re.DOTALL).findall(html.replace("amp;", ''))[0]
 
     iconimage = xbmc.translatePath(
         os.path.join('special://home/addons/plugin.video.topdocumentaryfilmscom/resources/media/serveimage.jpg'))
 
+    # full length youtube video
     urls = re.compile('<meta itemprop="embedUrl" content="https://www.youtube.com/embed/(.+?)">',
                       re.DOTALL).findall(html.replace('amp;', ''))
-    # full length youtube video
     if len(urls) > 0:
-        for u in urls:
-            url = 'plugin://plugin.video.youtube/play/?video_id=' + u[0:11]
+        url = 'plugin://plugin.video.youtube/play/?video_id=%s' % urls[0][0:11]
 
     # viemo video
     if len(url) < 1:
         # <meta itemprop="embedUrl" content="https://player.vimeo.com/video/124682831" />
         urls = re.compile('<meta itemprop="embedUrl" content="https://player.vimeo.com/video/(.+?)" />',
                           re.DOTALL).findall(html.replace('amp;', ''))
-        for u in urls:
-            url = "plugin://plugin.video.vimeo/play/?video_id=" + u
+        if len(urls) > 0:
+            url = "plugin://plugin.video.vimeo/play/?video_id=%s" % urls[0]
 
     # youtube playlist
     if len(url) < 1:
         # <iframe width="100%" height="325" src="http://www.youtube.com/embed/videoseries?list=PLEDAAA3B8EF7543C4" frameborder="0" allowfullscreen=""></iframe>
         urls = re.compile('http://www.youtube.com/embed/videoseries\?list=(.+?) ', re.DOTALL).findall(
             html.replace('amp;', ''))
-
-        for u in urls:
-            url = "plugin://plugin.video.youtube/play/?playlist_id=" + u[0:18]
+        if len(urls) > 0:
+            url = "plugin://plugin.video.youtube/play/?playlist_id=%s" % urls[0][0:18]
 
     if len(url) < 1:
         # //www.youtube.com/embed/videoseries?list=PL_IlIlrxhtPMXcWCd_z_UZ6pn8GYPGGlo&iv_load_policy=3&showinfo=0&autohide=1
-        urls = re.compile('list=PL_(.+?)_z_', re.DOTALL).findall(
-            html.replace('amp;', ''))
-        for u in urls:
-            url = "plugin://plugin.video.youtube/play/?playlist_id=" + u
+        urls = re.compile('list=PL_(.+?)_z_', re.DOTALL).findall(html.replace('amp;', ''))
+        if len(urls) > 0:
+            url = "plugin://plugin.video.youtube/play/?playlist_id=%s" % urls[0]
 
     # full length youtube video
     if len(urls) < 1:
         html = OpenURL('https://startpage.com/do/search?query=' + video + '&cat=web&pl=chrome&language=english')
         vids = re.compile('www.youtube.com/watch\?v=(.+?) ', re.DOTALL).findall(html.replace('amp;', ''))
-        for vid in vids:
-            url = 'plugin://plugin.video.youtube/play/?video_id=' + vid[0:11]
-            break
+        if len(vids) > 0:
+            url = 'plugin://plugin.video.youtube/play/?video_id=' + vids[0][0:11]
+
 
     try:
-        ex = re.compile('\[COLOR .+?\](.+?)\[/COLOR\].+?', re.DOTALL).findall(name.replace('amp;', ''))[0] \
-            .replace('[/B]', '').replace('[B]', '').replace('[/I]', '').replace('[I]', '')
+        ex = sanitize(re.compile('\[COLOR .+?\](.+?)\[/COLOR\]', re.DOTALL).findall(name.replace('amp;', ''))[0])
+
     except:
         ex = name
 
-    AddToMenu(style('     ' + ex, mlc, mlb, mli), url, 3, img, desc, '', video)
-
-    # try:  # trying to add some additional data from the page about the movie
+    AddToMenu(style('     ' + ex, mlc, sty[0], sty[1], sty[2]), url, 3, img, desc, '', video)
     AddToMenu(style('User Rating:   ', 'white', 0, 0) + getStarRating(rating, 1), url, 3, iconimage, '', '', video)
     AddToMenu(style('Comments & User Reviews', 'white', 0, 0), ex.replace(' ', '-').replace('[B]', ''), 13, iconimage,
               '', '', video)
-    sentence = ''
-    AddToMenu(style('  ---        ', 'green', 0, 0) +
-              style('---        ', 'red', 0, 0) +
-              style('---        ', 'yellow', 0, 0) +
-              style('         MOVIE SUMMARY         ', 'red', 1, 0) +
-              style('        ---', 'yellow', 0, 0) +
-              style('        ---', 'red', 0, 0) +
-              style('        ---  ', 'green', 0, 0),
+
+    AddToMenu('                                             ' + style('M O V I E   S U M M A R Y', 'red', 1, 0, 1),
               url, 3, addon.getAddonInfo('icon'), '', '', video)
 
+    sentence = ''
     for word in words:
-        sentence = sentence + " " + word
-        if len(sentence) > 58:
-            AddToMenu(style(sentence, dlc, dlb, dli), url, 3, img, '', '', video)
-            sentence = ''
-            # except:
-            #   print "Unexpected error:", sys.exc_info()[0]
+        for e in word:
+            sentence = sentence + " " + e
+            if len(sentence) > 58:
+                AddToMenu(style(sentence, dlc, stx[0], stx[1], stx[2]), url, 3, img, '', '', video)
+                sentence = ''
 
 
 # builds category and year movie listings
 def buildListPage(html):
-    name = ''
     img = addon.getAddonInfo('icon')
     articles = re.compile('<article class="module">(.+?)</article>', re.DOTALL).findall(html.replace('amp;', ''))
     for article in articles:
         name = ''
         url = ''
-        imgs = re.compile('<img width="95" height="125" src="(.+?)"', re.DOTALL).findall(article.replace('amp;', ''))
+        img = ''
+        imgs = re.compile('src="http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(article.replace('amp;', ''))
         for i in imgs:
-            img = i
-        descs = re.compile('<p>(.+?)</p>', re.DOTALL).findall(article.replace('amp;', ''))
-        for d in descs:
-            desc = d
-        names = re.compile(
-            '<div><a title="(.+?)" href="http://topdocumentaryfilms.com/.+?/">Watch now &rarr;</a></div>',
-            re.DOTALL).findall(article.replace('amp;', ''))
-        for n in names:
-            name = n.replace('&#039;', '')
-        urls = re.compile('<div><a title=".+?" href="http://topdocumentaryfilms.com/(.+?)/">Watch now &rarr;</a></div>',
-                          re.DOTALL).findall(article.replace('amp;', ''))
-        for u in urls:
-            url = u
+            img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/%s" % i
+        desc = sanitize(re.compile('<p>(.+?)</p>', re.DOTALL).findall(article.replace('amp;', ''))[0])
+        if article.find('Watch now') > 0:
+            names = re.compile(
+                '<a title="(.+?)" href="http://topdocumentaryfilms.com/.+?/">Watch now &rarr;</a>',
+                re.DOTALL).findall(article.replace('amp;', ''))
+            if len(names) > 0:
+                for n in names:
+                    name = sanitize(n)
 
-        rating = re.compile('<span class="archive_rating"><span class="star_color">.+?</span>(.+?)</span>',
-                            re.DOTALL).findall(article.replace("amp;", ''))[0]
+            urls = re.compile(
+                '<div><a title=".+?" href="http://topdocumentaryfilms.com/(.+?)/">Watch now &rarr;</a></div>',
+                re.DOTALL).findall(article.replace('amp;', ''))
+            for u in urls:
+                url = u
+            rating = re.compile('<span class="archive_rating"><span class="star_color">.+?</span>(.+?)</span>',
+                                re.DOTALL).findall(article.replace("amp;", ''))[0]
 
-        if len(url) > 0 and len(name) > 0:
-            AddToMenu(buildMovieItem(name, rating, desc), url, 2, img, desc, '', movie_url)
+            if len(url) > 0 and len(name) > 0:
+                AddToMenu(buildMovieItem(name, rating, desc), url, 2, img, desc, '', movie_url)
 
     page = re.compile('<div class="pagination module">(.+?)</div>',
                       re.DOTALL).findall(html.replace('amp;', ''))
@@ -482,7 +487,7 @@ def buildQuickPage(match):
                 try:
                     img = ''
                     desc = ''
-                    img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/" + \
+                    img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/%s" % \
                           re.compile('src="http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"',
                                      re.DOTALL).findall(li.replace('amp;', ''))[0]
                     desc = sanitize(
@@ -548,21 +553,8 @@ def buildSearch(url):
         url = tr
         n = tr.replace("-", ' ').split()
         for na in n:
-            name = name.replace('&#039;', '') + " " + na.capitalize()
+            name = sanitize(name) + " " + na.capitalize()
         AddToMenu(style(name, 'white', 0, 0), url, 2, '', '', '', movie_url)
-
-
-# Search menu click
-def OpenSearch():
-    search_entered = ''
-    keyboard = xbmc.Keyboard(search_entered, 'Search iPlayer')
-    keyboard.doModal()
-    if keyboard.isConfirmed():
-        search_entered = keyboard.getText().replace(' ', '%20')
-        if search_entered == None:
-            return False
-    NEW_URL = 'https://startpage.com/do/search?query=Top+Documentary+Films+' + search_entered + '&cat=web&pl=chrome&language=english'
-    buildSearch(NEW_URL)
 
 
 # processes inbound parameters
@@ -581,13 +573,12 @@ def get_params():
             splitparams = pairsofparams[i].split('=')
             if (len(splitparams)) == 2:
                 param[splitparams[0]] = splitparams[1]
-
     return param
 
 
+# handles comments click on movie details
 def ShowComments(url):
-    print 'http://topdocumentaryfilms.com/' + url.lower()
-    html = OpenURL('http://topdocumentaryfilms.com/' + url.lower())
+    html = OpenURL('http://topdocumentaryfilms.com/%s' % url.lower())
     section = re.compile('<section id="comments" class="comment module single-h2-title">(.+?)</section>',
                          re.DOTALL).findall(html.replace('amp;', ''))
 
@@ -616,6 +607,44 @@ def ShowComments(url):
         page = ' '
 
     showText(number, page)
+
+
+# Search menu click
+def OpenSearch():
+    search_entered = ''
+    keyboard = xbmc.Keyboard(search_entered, 'Search Top Documentary Films')
+    keyboard.doModal()
+    if keyboard.isConfirmed():
+        search_entered = keyboard.getText().replace(' ', '%20')
+        if len(search_entered) > 0:
+            NEW_URL = 'https://startpage.com/do/search?query=Top+Documentary+Films+%s' % search_entered + '&cat=web&pl=chrome&language=english'
+            buildSearch(NEW_URL)
+        else:
+            return False
+
+# opens user ratings & comments
+def showSplash():
+    xbmc.sleep(500)
+    id = 10147
+    xbmc.executebuiltin('ActivateWindow(%d)' % id)
+    xbmc.sleep(100)
+    win = xbmcgui.Window(id)
+    retry = 50
+    head = style("T O P   D O C U M E N T A R Y   F I L M S   K O D I   A D D O N", 'white', 1,1,1)
+    text = style("\nCurrent Version is 0.1.1\n\n", 'white', 1,0,1)
+    text = text + style("Lastest Updates:\n\nAdded Splash Screen\n\nFixed long descriptions\n\n\n", 'white', 1,0,1)
+    text = text + style("Be sure to visit the add on settings to optimize your experience\n\n", 'white', 1,0,1)
+    text = text + style("Visit: http://forum.kodi.tv/showthread.php?tid=240005  for support", 'white', 1,0,1)
+    while (retry > 0):
+        try:
+            xbmc.sleep(10)
+            retry -= 1
+            win.getControl(1).setLabel(head)
+            win.getControl(5).setText(text)
+            return
+        except:
+            pass
+
 
 
 params = get_params()
