@@ -7,10 +7,7 @@
         <setting id="main_show_featured" type="bool" label="30114" default="true" />
         <setting id="show_featured_dtl" type="bool" label="30115" default="false" />
         <setting id="show_quick_dtl" type="bool" label="30116" default="false" />
-<<<<<<< HEAD
         <setting id="splash_start" type="bool" label="30117" default="true" />
-=======
->>>>>>> 4775f0693cec24c564768a282510999470be6982
     </category>
     <category label="30149"> <!-- List Menus -->
     <setting type="lsep" label="30150" />

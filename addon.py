@@ -44,31 +44,10 @@ def setStyle(s):
     return r
 
 
-def setStyle(s):
-    r = []
-    if s == '1' or s == '4' or s == '5' or s == '7':
-        r.append('true')
-    else:
-        r.append('false')
-    if s == '2' or s == '4' or s == '6' or s == '7':
-        r.append('true')
-    else:
-        r.append('false')
-    if s == '3' or s == '5' or s == '6' or s == '7':
-        r.append('true')
-    else:
-        r.append('false')
-    return r
-
-
 # Standard Movie Menu Item Look
 def buildMovieItem(name, rating, desc):
     mlc = setting('movie_list_color')
-<<<<<<< HEAD
     sty = setStyle(setting('movie_list_style'))
-=======
-    sty = setStyle(setting('movie_list_color'))
->>>>>>> 4775f0693cec24c564768a282510999470be6982
     retval = style(name, mlc, sty[0], sty[1], sty[2])
     slc = setting('show_rating')
     if slc == 'true' and rating != 0: retval = retval + getStarRating(rating, 0)
@@ -81,7 +60,6 @@ def buildMovieItem(name, rating, desc):
 def getStarRating(star, full):
     rlc = setting('rating_list_color')
     sty = setStyle('rating_list_style')
-<<<<<<< HEAD
 
     if full == 0:
         return style('  -  ', rlc, sty[0], sty[1]) + style(star[0:4], rlc, sty[0], sty[1]) + \
@@ -98,20 +76,6 @@ def getStarRating(star, full):
         return style('  -    ', rlc, sty[0], sty[1]) + style(rating, rlc, sty[0], sty[1])
 
 
-=======
-    x = math.ceil(float(star))
-    y = 0
-    star_rating = ""
-    if full == 1:
-        while y < x:
-            star_rating = star_rating + " *"
-            y = y + 1
-    rating = str(int(x)) + " " + star_rating
-    return style('  -  ', rlc, sty[0], sty[1]) + style(rating, rlc, sty[0], sty[1]) + style('  -  ', rlc, sty[0],
-                                                                                            sty[1])
-
-
->>>>>>> 4775f0693cec24c564768a282510999470be6982
 # builds movie description
 def getMovieDesc(desc):
     if len(desc) < 5: return ""
@@ -250,15 +214,12 @@ def TopLevelCategories():
     msf = setting('main_show_featured')
     sfd = setting('show_featured_dtl')
 
-<<<<<<< HEAD
 
     splash = setting("splash_start")
     if splash == 'true':
         showSplash()
         xbmcaddon.Addon().setSetting("splash_start", "false")
 
-=======
->>>>>>> 4775f0693cec24c564768a282510999470be6982
     AddToMenu(style('Documentary Categories', mlc, mlb, mli, cap), 'url', 9, addon.getAddonInfo('icon'), '', '',
               movie_url)
     AddToMenu(style('Recently Added', mlc, mlb, mli, cap), 'url', 5, addon.getAddonInfo('icon'), '', '', movie_url)
@@ -270,11 +231,7 @@ def TopLevelCategories():
 
     if msf == 'true':
         AddToMenu(style('                                                  F  E  A  T  U  R  E  D', 'red', 1, 0, 1),
-<<<<<<< HEAD
                   'url', 0, addon.getAddonInfo('icon'), '', '', 'url')
-=======
-            'url', 0, addon.getAddonInfo('icon'), '', '', 'url')
->>>>>>> 4775f0693cec24c564768a282510999470be6982
 
         html = OpenURL('http://topdocumentaryfilms.com/')
         main = re.compile('<main role="main" class="grid-2-3">(.+?)</main>', re.DOTALL).findall(
@@ -301,7 +258,6 @@ def TopLevelCategories():
                         info = re.compile(
                             '<a href="http://topdocumentaryfilms.com/(.+?)/" title="(.+?)">', re.DOTALL).findall(
                             module.replace('amp;', ''))
-                        print info
                     except:
                         pass
 
@@ -324,10 +280,6 @@ def TopLevelCategories():
                 m.replace('amp;', ''))
 
             for article in articles:
-<<<<<<< HEAD
-=======
-                print article
->>>>>>> 4775f0693cec24c564768a282510999470be6982
                 try:
                     img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/" + \
                           re.compile('http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(
@@ -340,10 +292,6 @@ def TopLevelCategories():
 
                 if article.find('docu-text') < 0:
                     for u, n in info:
-<<<<<<< HEAD
-=======
-                        print n
->>>>>>> 4775f0693cec24c564768a282510999470be6982
                         url = u
                         name = sanitize(n)
 
@@ -447,16 +395,10 @@ def AddVideoEntry(video, name):
         vids = re.compile('www.youtube.com/watch\?v=(.+?) ', re.DOTALL).findall(html.replace('amp;', ''))
         if len(vids) > 0:
             url = 'plugin://plugin.video.youtube/play/?video_id=' + vids[0][0:11]
-<<<<<<< HEAD
 
 
     try:
         ex = sanitize(re.compile('\[COLOR .+?\](.+?)\[/COLOR\]', re.DOTALL).findall(name.replace('amp;', ''))[0])
-=======
-
-    try:
-        ex = sanitize(re.compile('\[COLOR .+?\](.+?)\[/COLOR\].+?', re.DOTALL).findall(name.replace('amp;', ''))[0])
->>>>>>> 4775f0693cec24c564768a282510999470be6982
 
     except:
         ex = name
@@ -466,28 +408,16 @@ def AddVideoEntry(video, name):
     AddToMenu(style('Comments & User Reviews', 'white', 0, 0), ex.replace(' ', '-').replace('[B]', ''), 13, iconimage,
               '', '', video)
 
-<<<<<<< HEAD
     AddToMenu('                                             ' + style('M O V I E   S U M M A R Y', 'red', 1, 0, 1),
-=======
-    AddToMenu('                                                  ' + style('M O V I E   S U M M A R Y', 'red', 1, 0, 1),
->>>>>>> 4775f0693cec24c564768a282510999470be6982
               url, 3, addon.getAddonInfo('icon'), '', '', video)
 
     sentence = ''
     for word in words:
-<<<<<<< HEAD
         for e in word:
             sentence = sentence + " " + e
             if len(sentence) > 58:
                 AddToMenu(style(sentence, dlc, stx[0], stx[1], stx[2]), url, 3, img, '', '', video)
                 sentence = ''
-=======
-        sentence = sentence + " " + word
-        if len(sentence) > 58:
-            print sentence
-            AddToMenu(style(sentence, dlc, stx[0], stx[1], stx[2]), url, 3, img, '', '', video)
-            sentence = ''
->>>>>>> 4775f0693cec24c564768a282510999470be6982
 
 
 # builds category and year movie listings
@@ -495,17 +425,12 @@ def buildListPage(html):
     img = addon.getAddonInfo('icon')
     articles = re.compile('<article class="module">(.+?)</article>', re.DOTALL).findall(html.replace('amp;', ''))
     for article in articles:
-        print article
         name = ''
         url = ''
         img = ''
         imgs = re.compile('src="http://cdn.topdocumentaryfilms.com/wp-content/uploads/(.+?)"', re.DOTALL).findall(article.replace('amp;', ''))
         for i in imgs:
-<<<<<<< HEAD
             img = "http://cdn.topdocumentaryfilms.com/wp-content/uploads/%s" % i
-=======
-            img = i
->>>>>>> 4775f0693cec24c564768a282510999470be6982
         desc = sanitize(re.compile('<p>(.+?)</p>', re.DOTALL).findall(article.replace('amp;', ''))[0])
         if article.find('Watch now') > 0:
             names = re.compile(
@@ -513,10 +438,6 @@ def buildListPage(html):
                 re.DOTALL).findall(article.replace('amp;', ''))
             if len(names) > 0:
                 for n in names:
-<<<<<<< HEAD
-=======
-                    print n
->>>>>>> 4775f0693cec24c564768a282510999470be6982
                     name = sanitize(n)
 
             urls = re.compile(
@@ -691,7 +612,6 @@ def ShowComments(url):
 # Search menu click
 def OpenSearch():
     search_entered = ''
-<<<<<<< HEAD
     keyboard = xbmc.Keyboard(search_entered, 'Search Top Documentary Films')
     keyboard.doModal()
     if keyboard.isConfirmed():
@@ -725,16 +645,6 @@ def showSplash():
         except:
             pass
 
-=======
-    keyboard = xbmc.Keyboard(search_entered, 'Search iPlayer')
-    keyboard.doModal()
-    if keyboard.isConfirmed():
-        search_entered = keyboard.getText().replace(' ', '%20')
-        if search_entered == None:
-            return False
-    NEW_URL = 'https://startpage.com/do/search?query=Top+Documentary+Films+' + search_entered + '&cat=web&pl=chrome&language=english'
-    buildSearch(NEW_URL)
->>>>>>> 4775f0693cec24c564768a282510999470be6982
 
 
 params = get_params()
