@@ -631,7 +631,7 @@ def showSplash():
     win = xbmcgui.Window(id)
     retry = 50
     head = style("T O P   D O C U M E N T A R Y   F I L M S   K O D I   A D D O N", 'white', 1,1,1)
-    text = style("\nCurrent Version is 0.1.1\n\n", 'white', 1,0,1)
+    text = style("\nCurrent Version is 0.1.2\n\n", 'white', 1,0,1)
     text = text + style("Lastest Updates:\n\nAdded Splash Screen\n\nFixed long descriptions\n\n\n", 'white', 1,0,1)
     text = text + style("Be sure to visit the add on settings to optimize your experience\n\n", 'white', 1,0,1)
     text = text + style("Visit: http://forum.kodi.tv/showthread.php?tid=240005  for support", 'white', 1,0,1)
