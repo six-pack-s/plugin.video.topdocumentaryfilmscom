@@ -9,6 +9,10 @@ Release History: https://github.com/six-pack-s/plugin.video.topdocumentaryfilmsc
 
 Current Release Zip: https://github.com/six-pack-s/plugin.video.topdocumentaryfilmscom/releases/download/0.1.0/plugin.video.topdocumentaryfilmscom.zip
 
+0.1.2
+9/28/2015
+Changed fanart
+
 0.1.1
 9/27/2015
             Fixed long descriptions
